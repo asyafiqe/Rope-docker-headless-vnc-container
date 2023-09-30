@@ -1,6 +1,6 @@
 # Rope-docker-headless-vnc-container 
 
-This is a docker for running [Rope](https://github.com/Hillobar/Rope) using [headless VNC environments](https://github.com/ConSol/docker-headless-vnc-container). Useful for running Rope on cloud GPU services like runpod.io or vast.ai.
+This is a docker for running [**Rope**](https://github.com/Hillobar/Rope) using [**headless VNC environments**](https://github.com/ConSol/docker-headless-vnc-container). Useful for running Rope on cloud GPU services like [Runpod.io](https://www.runpod.io/) or [Vast.ai](https://vast.ai/).
 
 The Docker image is installed with the following components:
 * [**Rope**](https://github.com/Hillobar/Rope)
@@ -24,7 +24,7 @@ The Docker image is installed with the following components:
 
       docker build -t asyafiqe/rope_vnc .
 
-- Vast.ai template:
+- [Vast.ai](https://vast.ai/) template:
     Put `asyafiqe/rope_vnc:latest` in image path/tag.
     Docker options:
     ```
@@ -38,7 +38,9 @@ The Docker image is installed with the following components:
     /dockerstartup/vnc_startup.sh
     sleep infinity
     ```
-- Runpod.io template:
+    ![vast ai_template](https://github.com/asyafiqe/Rope-docker-headless-vnc-container/assets/51208506/9903a1d4-d73c-45cd-9c16-4c2c1cd809cb)
+
+- [Runpod.io](https://www.runpod.io/) template:
     * Container image: `asyafiqe/rope_vnc:latest`.
     * Docker command: 
     ```
@@ -49,3 +51,4 @@ The Docker image is installed with the following components:
     * Volume mount path: `/workspace`
     * Expose http ports: `5901,6901,8080`
     * Environment Variables: key: `VNC_PASSWORDLESS`, value `true`
+   ![runpod io_template](https://github.com/asyafiqe/Rope-docker-headless-vnc-container/assets/51208506/97b2753e-5e49-4f81-8d44-5e8f4d6fca2d)
