@@ -13,6 +13,8 @@ The Docker image is installed with the following components:
 * [**fiebrowser**](https://github.com/filebrowser/filebrowser) (default http port `8585`)
 *  Mozilla Firefox
 
+![screenshot2](https://github.com/user-attachments/assets/2ecad65f-3795-4d95-8568-d8bf33ed1966)
+
 ## Usage
 - Run command with mapping to local port `5901` (vnc protocol), `6901` (vnc web access), `8080` (JupyterLab), and `8585` (filebrowser):
 
