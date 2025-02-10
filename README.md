@@ -1,15 +1,15 @@
-# Rope-docker-headless-vnc-container 
+# VisoMaster-docker-headless-vnc-container 
 
-This is a docker for running [**Rope**](https://github.com/Hillobar/Rope) using [**headless VNC environments**](https://github.com/ConSol/docker-headless-vnc-container). Useful for running Rope on cloud GPU services like [Runpod.io](https://www.runpod.io/) or [Vast.ai](https://vast.ai/).
+This is a docker for running [**VisoMaster**](https://github.com/visomaster/VisoMaster) using [**headless VNC environments**](https://github.com/ConSol/docker-headless-vnc-container). Useful for running Rope on cloud GPU services like [Runpod.io](https://www.runpod.io/) or [Vast.ai](https://vast.ai/).
 
 The Docker image is installed with the following components:
-* [**Rope**](https://github.com/Hillobar/Rope) Pearl-00
+* [**VisoMaster**](https://github.com/visomaster/VisoMaster) v0.1.1
 * JupyterLab (default http port `8080`)
 * VNC-Server (default VNC port `5901`)
 * [**noVNC**](https://github.com/novnc/noVNC) 1.5.0 - HTML5 VNC client (default http port `6901`)
 * CUDA Toolkit 11.8
 * Pytorch 2.0.1+cu118
-* Desktop environment [**Xfce4**](http://www.xfce.org)
+* Desktop environment [**IceWM**](https://ice-wm.org/)
 * [**fiebrowser**](https://github.com/filebrowser/filebrowser) (default http port `8585`)
 *  Mozilla Firefox
 
@@ -26,7 +26,7 @@ The Docker image is installed with the following components:
       docker build -t asyafiqe/rope_vnc .
 
 - [Vast.ai](https://vast.ai/) template:
-    Put `asyafiqe/rope_vnc:latest` in image path/tag.
+    Put `asyafiqe/rope_vnc:11.8.0-cudnn8-devel-ubuntu22.04-icewm-visomaster-0.1.1-0.2` in image path/tag.
     Docker options:
     ```
     -p 5901:5901 -p 6901:6901 -p 8080:8080 -p 8585:8585 -e VNC_PASSWORDLESS=true  -e VNC_RESOLUTION=1024x768
@@ -42,7 +42,7 @@ The Docker image is installed with the following components:
     ![vast ai_template](https://github.com/user-attachments/assets/28079139-db32-4f5a-97a8-af99d8d6244a)
 
 - [Runpod.io](https://www.runpod.io/) template:
-    * Container image: `asyafiqe/rope_vnc:latest`.
+    * Container image: `asyafiqe/rope_vnc:11.8.0-cudnn8-devel-ubuntu22.04-icewm-visomaster-0.1.1-0.2`.
     * Docker command: 
     ```
     -p 5901:5901 -p 6901:6901 -p 8080:8080 -p 8585:8585
