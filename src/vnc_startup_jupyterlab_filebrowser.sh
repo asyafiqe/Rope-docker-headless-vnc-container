@@ -116,8 +116,8 @@ echo -e "Starting jupyterlab at port 8080..."
 nohup jupyter lab --port 8080 --notebook-dir=/workspace --allow-root --no-browser --ip=0.0.0.0  --NotebookApp.token='' --NotebookApp.password='' &
 echo -e "Starting jupyterlab at port 8585..."
 nohup filebrowser -r /workspace -p 8585 -a 0.0.0.0 --noauth &
-echo -e "Starting Rope..."
-python /workspace/Rope/Rope.py
+echo -e "Starting VisoMaster..."
+python /$HOME/VisoMaster/main.py
 
 if [[ $DEBUG == true ]] || [[ $1 =~ -t|--tail-log ]]; then
     echo -e "\n------------------ $HOME/.vnc/*$DISPLAY.log ------------------"
