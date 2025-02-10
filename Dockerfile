@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     ffmpeg \
-    jq \
+    # jq \
     tzdata && \
     ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -57,6 +57,7 @@ ENV PATH /opt/conda/bin:$PATH
 ### Add all install scripts for further steps
 ADD ./src/common/install/ $INST_SCRIPTS/
 ADD ./src/debian/install/ $INST_SCRIPTS/
+RUN chmod 765 $INST_SCRIPTS/*
 
 ### Install some common tools
 RUN $INST_SCRIPTS/tools.sh
@@ -72,9 +73,9 @@ RUN $INST_SCRIPTS/no_vnc_1.5.0.sh
 ### Install firefox and chrome browser
 RUN $INST_SCRIPTS/firefox.sh
 
-### Install xfce UI
-RUN $INST_SCRIPTS/xfce_ui.sh
-ADD ./src/common/xfce/ $HOME/
+### Install IceWM UI
+RUN $INST_SCRIPTS/icewm_ui.sh
+ADD ./src/debian/icewm/ $HOME/
 
 ### configure startup
 RUN $INST_SCRIPTS/libnss_wrapper.sh
@@ -82,27 +83,53 @@ ADD ./src/common/scripts $STARTUPDIR
 RUN $INST_SCRIPTS/set_user_permission.sh $STARTUPDIR $HOME
 
 ### Create conda environment
-RUN conda create -n Rope python=3.10.13 && conda clean --all -y
+RUN conda create -n visomaster python=3.10.13 && conda clean --all -y
 
 ### Activate the environment
-ENV CONDA_DEFAULT_ENV Rope
+ENV CONDA_DEFAULT_ENV visomaster
 RUN echo "source activate $CONDA_DEFAULT_ENV" >> ~/.bashrc
 ENV PATH /opt/conda/envs/$CONDA_DEFAULT_ENV/bin:$PATH
 
-### Install Rope
-WORKDIR /workspace
-RUN git clone https://github.com/Hillobar/Rope.git
-WORKDIR /workspace/Rope
 
-### Install dependencies. Fix Models.py backslash path
-RUN pip install -r ./requirements.txt --no-cache-dir
-COPY ./src/Models.py /workspace/Rope/rope/Models.py
+# # FROM nvidia/cuda:12.4.1-cudnn8-runtime-ubuntu20.04
+# FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
-### Download models
-WORKDIR /workspace/Rope/models
-RUN wget -qO- https://api.github.com/repos/Hillobar/Rope/releases/tags/Sapphire | jq -r '.assets[] | .browser_download_url' | xargs -n 1 wget
-WORKDIR /workspace/Rope
+# # Set working directory
+# WORKDIR /app
 
+# # Install system dependencies
+# RUN apt-get update && apt-get install -y \
+#     python3.10 \
+#     python3-pip \
+#     git \
+#     curl \
+#     && rm -rf /var/lib/apt/lists/*
+
+# # Copy requirements file
+# #COPY requirements_cu124.txt .
+# #COPY requirements_cu118.txt .
+RUN git clone https://github.com/visomaster/VisoMaster.git
+WORKDIR $HOME/VisoMaster
+
+# Install Python dependencies
+# RUN pip3 install --no-cache-dir -r requirements_cu124.txt
+RUN pip3 install --no-cache-dir -r requirements_cu118.txt
+RUN pip3 install scikit-image
+
+# Copy the rest of the application
+# COPY . .
+
+# Download models (you might want to comment this out if you're mounting models volume)
+# RUN apt-get update && apt-get install -y \
+#     curl \
+#     && rm -rf /var/lib/apt/lists/*
+#RUN curl -L https://github.com/visomaster/visomaster-assets/releases/download/v0.1.0_dp/ffmpeg.exe -o ./dependencies/ffmpeg.exe
+RUN wget -O ./dependencies/ffmpeg.exe https://github.com/visomaster/visomaster-assets/releases/download/v0.1.0_dp/ffmpeg.exe
+RUN python3 download_models.py
+
+
+# # Command to run when starting the container
+# CMD ["python3", "main.py"]  # Replace with your actual entry point
 ### Install jupyterlab
 RUN pip install jupyterlab
 EXPOSE 8080
@@ -111,11 +138,38 @@ EXPOSE 8080
 RUN wget -O - https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
 EXPOSE 8585
 
+
+
+# nvidia problem
+RUN apt-get update && apt-get install -y \
+    libegl1 \
+    libgl1-mesa-glx \
+    libglib2.0-0
+# qt prblem
+RUN apt-get update && apt-get install -y \
+    libxcb-cursor0 \
+    libxcb-xinerama0 \
+    libxkbcommon-x11-0 && \
+    rm -rf /var/lib/apt/lists/*
+    
+RUN apt-get update && apt-get install -y \
+    libqt5gui5 \
+    libqt5core5a \
+    libqt5widgets5 \
+    libqt5x11extras5 && \
+    rm -rf /var/lib/apt/lists/*
+
+# fileman
+RUN apt-get update && apt-get install -y \
+    pcmanfm && \
+    rm -rf /var/lib/apt/lists/*
+
 ### Reconfigure startup
 COPY ./src/vnc_startup_jupyterlab_filebrowser.sh /dockerstartup/vnc_startup.sh
 RUN chmod 765 /dockerstartup/vnc_startup.sh
 
 ENV VNC_RESOLUTION=1280x1024
 
+# ENV QT_QPA_PLATFORM=wayland
 ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 CMD ["--wait"]
